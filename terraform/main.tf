@@ -7,30 +7,26 @@ resource "google_compute_instance" "app" {
  name = "reddit-app"
  machine_type = "g1-small"
  zone = "europe-west1-b"
-# определение загрузочного диска
  boot_disk {
   initialize_params {
-  image = "reddit-base-1539977471"
+  image = "reddit-base-1540391806"
   }
  }
  metadata {
-  sshKeys = "yuriy:${file("~/.ssh/google_compute_engine.pub")}"
+  sshKeys = "appuser:${file("~/.ssh/appuser.pub")}"
  }
 tags = ["reddit-app"]
 
-# определение сетевого интерфейса
 network_interface {
- # сеть, к которой присоединить данный интерфейс
  network = "default"
- # использовать ephemeral IP для доступа из Интернет
  access_config {}
  }
 
 connection {
  type = "ssh"
- user = "yuriy"
+ user = "appuser"
  agent = false
- private_key = "${file("~/.ssh/google_compute_engine")}"
+ private_key = "${file("~/.ssh/appuser")}"
 }
 
 provisioner "file" {
@@ -44,17 +40,13 @@ provisioner "remote-exec" {
 }
 
 
-resource "google_compute_firewall" "firewall_puma" {
- name = "allow-puma-default"
-# Название сети, в которой действует правило
+resource "google_compute_firewall" "reddit-app" {
+ name = "reddit-app"
  network = "default"
-# Какой доступ разрешить
  allow {
   protocol = "tcp"
-  ports = ["9292"]
+  ports = ["9292", "22"]
  }
-# Каким адресам разрешаем доступ
  source_ranges = ["0.0.0.0/0"]
-# Правило применимо для инстансов с тегом ...
  target_tags = ["reddit-app"]
  }

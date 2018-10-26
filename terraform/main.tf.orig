@@ -1,6 +1,6 @@
 provider "google" {
   project = "first-210712"
-  region  = "asia-east1"
+  region = "asia-east1"
 }
 
 module "app" {
@@ -16,6 +16,6 @@ module "db" {
 }
 
 module "vpc" {
-  source       = "modules/vpc"
-  source_range = "${var.source_range}"
+  source          = "modules/vpc"
+  source_range    = "${var.source_range}"
 }

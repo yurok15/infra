@@ -1,0 +1,19 @@
+provider "google" {
+ project = "first-210712"
+ region = "us-west1"
+}
+/*
+connection {
+ type = "ssh"
+ user = "appuser"
+ agent = false
+ private_key = "${file("~/.ssh/appuser")}"
+}
+provisioner "file" {
+ source = "files/puma.service"
+ destination = "/tmp/puma.service"
+ }
+provisioner "remote-exec" {
+ script = "files/deploy.sh"
+ }
+*/

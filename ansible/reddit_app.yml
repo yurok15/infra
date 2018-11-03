@@ -1,0 +1,62 @@
+# Setup and configure ruby things for reddit app
+- name: "Reddit App: Configure app environment"
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - name: Install ruby and rubygems and required packages
+    apt: "name={{ item }} state=present"
+    with_items:
+    - ruby-full
+    - ruby-dev
+    - build-essential
+
+  - name: Install Ruby bundler
+    gem:
+      name: bundler
+      state: present
+      user_install: no
+
+# Deploy reddit app
+- name: "Reddit App: Deploy application"
+  hosts: all
+  gather_facts: no
+
+  tasks:
+  - name: Remove me after adding real things
+    git:
+      repo: 'https://github.com/express42/reddit'
+      dest: '~/reddit'
+      clone: yes
+
+  - name: Run bundler
+    command: bundle install --gemfile=reddit/Gemfile
+
+- name: Run Puma
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Create systemd statup script
+    template:
+      src: 'puma.service'
+      dest: '/etc/systemd/system/puma.service'
+      owner: 'root'
+      group: 'root'
+      mode: '0644'
+    notify:
+    - restart puma
+  - name: ensure puma is running
+    service:
+      name: puma
+      state: started
+  - name: Enable service on boot
+    systemd:
+      name: puma
+      enabled: yes
+  handlers:
+    - name: restart puma
+      service:
+        name: puma
+        state: restarted

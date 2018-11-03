@@ -1,0 +1,23 @@
+# Setup and configure mongodb for reddit app
+- name: "Reddit App: Install mongodb"
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - apt_repository:
+      repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
+      state: present
+
+  - name: Install mongodb package
+    apt:
+      name: mongodb-org
+      allow_unauthenticated: yes
+      update_cache: yes
+      state: present
+
+  - name: Make sure mongo started and enabled
+    systemd:
+      name: mongod
+      enabled: yes
+      state: started

@@ -1,0 +1,25 @@
+{
+ "builders": [
+ {
+  "type": "googlecompute",
+  "project_id": "first-210712",
+  "image_name": "reddit-base-{{timestamp}}",
+  "source_image": "ubuntu-1604-xenial-v20181030",
+  "zone": "us-west1-b",
+  "ssh_username": "appuser",
+  "tags": ["ssh", "default-puma-server"],  
+  "machine_type": "f1-micro"
+ }
+ ],
+ 
+ "provisioners": [
+ {
+  "type": "ansible",
+  "playbook_file": "../ansible/reddit_db.yml"
+ },
+  {
+   "type": "ansible",
+   "playbook_file": "../ansible/reddit_app.yml"
+  }
+ ]
+}
